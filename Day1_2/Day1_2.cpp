@@ -9,22 +9,40 @@ int main()
 {
     std::ifstream stream("..\\input1.txt");
     std::string line;
-    std::vector<int> data1, data2;
-    int pos = 0;
+    int dial = 50, sum = 0, rot = 0;
     while (std::getline(stream, line)) {
         std::istringstream iss(line);
-        int num1, num2;
-        iss >> num1 >> num2;
-        data1.push_back(num1);
-        data2.push_back(num2);
-        ++pos;
+        char c;
+        int num;
+        iss >> c >> num;
+        rot += num / 100;
+        num %= 100;
+        int previous = dial;
+        if (c == 'L') {
+            dial -= num;
+        }
+        else {
+            dial += num;
+        }
+        // We will not be going through 0 since we are on it
+        if (dial < 0 && previous == 0) {
+            --rot;
+        }
+        if (dial < 0) { // Rotations left
+            dial += 100;
+            ++rot;
+        }
+        if (dial > 100) { // Rotations right
+            ++rot;
+            dial -= 100;
+        }
+        if (dial == 100) { // This is not rotation - this is landing on 0
+            dial = 0;
+        }
+        if (dial == 0) { // Landing exactly on zero
+            ++sum;
+        }
     }
-    std::sort(data1.begin(), data1.end());
-    std::sort(data2.begin(), data2.end());
-    int sum = 0;
-    for (int i = 0; i < data1.size(); ++i) {
-        sum += abs(data1[i] - data2[i]);
-    }
-    std::cout << sum << std::endl;
+    std::cout << sum << " " << rot << " " << (rot + sum) << std::endl;
     return 0;
 }
