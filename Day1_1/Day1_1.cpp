@@ -15,6 +15,8 @@ int main()
         char c;
         int num;
         iss >> c >> num;
+        rot += num / 100;
+        num %= 100;
         int previous = dial;
         if (c == 'L') {
             dial -= num;
@@ -26,11 +28,11 @@ int main()
         if (dial < 0 && previous == 0) {
             --rot;
         }
-        while (dial < 0) { // Rotations left
+        if (dial < 0) { // Rotations left
             dial += 100;
             ++rot;
         }
-        while (dial > 100) { // Rotations right
+        if (dial > 100) { // Rotations right
             ++rot;
             dial -= 100;
         }
