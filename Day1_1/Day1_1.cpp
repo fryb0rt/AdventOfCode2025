@@ -23,7 +23,8 @@ int main()
             dial += num;
         }
         if (dial < 0) { // Rotations left
-            dial += 100;
+            dial += 100; 
+
         }
         if (dial >= 100) { // Rotations right
             dial -= 100;
