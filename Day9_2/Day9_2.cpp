@@ -10,7 +10,7 @@ int main()
     std::ifstream stream("..\\input9.txt");
     std::string line;
     struct J {
-        int64_t x, y;
+        int x, y;
     };
 
     std::vector<J> js;
@@ -21,6 +21,46 @@ int main()
         iss >> j.x >> c >> j.y;
         js.push_back(j);
     }
+    
+    int minX = 1000000, minY = 1000000, maxX =- 1000000, maxY= -1000000;
+    for (auto j : js) {
+        minX = std::min(minX, j.x);
+        minY = std::min(minY, j.y);
+        maxX = std::max(maxX, j.x);
+        maxY = std::max(maxY, j.y);
+    }
+    struct Line {
+        int minX, minY, maxX, maxY;
+    };
+    std::vector<Line> lines;
+    for (int i = 0; i < js.size(); ++i) {
+        J j = js[i];
+        J j = js[i % js.size()];
+        Line l;
+        l.minX = std::min(minX, j.x);
+        l.minY = std::min(minY, j.y);
+        l.maxX = std::max(maxX, j.x);
+        l.maxY = std::max(maxY, j.y);
+        lines.push_back()
+    }
+    std::sort(js.begin(), js.end());
+    struct I {
+        int minY, maxY;
+    };
+    std::vector<std::vector<I>> field(maxX - minX + 1);
+    for (int i = 0; i < field.size(); ++i) {
+        int x = minX + i;
+        for (const auto& j : js) {
+            if (j.x >= x )
+        }
+    }
+    std::vector<J> stack;
+    stack.push_back(js[0]);
+    while (stack.empty()) {
+        J j = stack.back();
+
+    }
+
     const auto dir = [&](int i, int j) {
         const auto& a = js[i];
         const auto& b = js[j];
@@ -53,15 +93,6 @@ int main()
 
     };
     
-    const auto test = [&](int i, int j) {
-        int min = std::min(i, j);
-        int max = std::max(i, j);
-        int x = js[min].x, y = js[min].y;
-        int prevPrev= - 1, prev = min;
-        for (int i = min; i <= max; ++i) {
-            int d = dir()
-            
-        };
     struct P {
         int i, j;
         int64_t dist;
@@ -76,11 +107,9 @@ int main()
             p.i = i;
             p.j = k;
             const int64_t x = js[i].x - js[k].x + 1;
-            const int64_t y = js[i].y - js[k].y + 1;
-            if (test(i, k)) {
+            int64_t y = js[i].y - js[k].y + 1;
                 p.dist = x * y;
                 ps.push_back(p);
-            }
         }
     }
     std::sort(ps.begin(), ps.end());
