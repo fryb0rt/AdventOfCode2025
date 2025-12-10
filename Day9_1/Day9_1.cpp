@@ -21,26 +21,17 @@ int main()
         iss >> j.x >> c >> j.y;
         js.push_back(j);
     }
-    struct P {
-        int i, j;
-        int64_t dist;
-        bool operator<(const P& p) const {
-            return dist < p.dist;
-        }
-    };
-    std::vector<P> ps;
+    int64_t m = 0;
     for (int i = 0; i < js.size(); ++i) {
         for (int k = i + 1; k < js.size(); ++k) {
-            P p;
-            p.i = i;
-            p.j = k;
             const int64_t x = js[i].x - js[k].x + 1;
             const int64_t y = js[i].y - js[k].y + 1;
-            p.dist = x * y;
-            ps.push_back(p);
+            const int64_t r = x * y;
+            if (m < r) {
+                m = r;
+            }
         }
     }
-    std::sort(ps.begin(), ps.end());
-    std::cout << ps.back().dist << std::endl;
+    std::cout << m << std::endl;
     return 0;
 }
