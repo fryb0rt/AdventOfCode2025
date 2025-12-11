@@ -52,6 +52,7 @@
 /Day25_1/x64/Debug
 /Day25_2/x64/Debug
 /Day25/x64/Debug
+/TestSimplexSolver/x64/Debug
 /.vs/AdventOfCode2024/v16
 *.user       
 /inputs/*
@@ -110,3 +111,5 @@
 /Day25_1/x64/Release
 /Day25_2/x64/Release
 /Day25/x64/Release
+/TestSimplexSolver/x64/Release
+Input*.txt

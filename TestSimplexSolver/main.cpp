@@ -9,12 +9,16 @@
 
 using SS = SimplexSolver<double>;
 
-void testCommon(const SS& solver, const SS::Operation operation) {
+void testCommon(const SS& solver, const SS::Operation operation, const double expectedCost) {
 	solver.print();
 	const SS::Result result = solver.execute(operation);
 	result.print();
-	if (solver.checkResult(result)) {
+	if (solver.checkResult(result) && abs(result.cost - expectedCost) < 1e-6) {
 		std::cout << "Everything OK!" << std::endl;
+	}
+	else {
+		std::cout << "ERROR !" << std::endl;
+		__debugbreak();
 	}
 	std::cout << std::endl;
 }
@@ -26,7 +30,7 @@ void testSolver1() {
 	solver.setVariable(0, -2);
 	solver.setVariable(1, -3);
 	solver.setVariable(2, -4);
-	testCommon(solver, SS::Operation::MINIMIZE);
+	testCommon(solver, SS::Operation::MINIMIZE, -18.571428571428569);
 }
 
 void testSolver2() {
@@ -36,7 +40,7 @@ void testSolver2() {
 	solver.setVariable(0, -2);
 	solver.setVariable(1, -3);
 	solver.print();
-	testCommon(solver, SS::Operation::MINIMIZE);
+	testCommon(solver, SS::Operation::MINIMIZE, -17);
 }
 
 void testSolver3() {
@@ -47,7 +51,7 @@ void testSolver3() {
 	solver.setVariable(0, 6);
 	solver.setVariable(1, 5);
 	solver.setVariable(2, 4);
-	testCommon(solver, SS::Operation::MAXIMIZE);
+	testCommon(solver, SS::Operation::MAXIMIZE, 66);
 }
 
 void testSolver4() {
@@ -57,7 +61,7 @@ void testSolver4() {
 	solver.setVariable(0, -2);
 	solver.setVariable(1, -3);
 	solver.setVariable(2, -4);
-	testCommon(solver, SS::Operation::MINIMIZE);
+	testCommon(solver, SS::Operation::MINIMIZE, -20);
 }
 
 void testSolver5() {
@@ -68,7 +72,7 @@ void testSolver5() {
 	solver.setVariable(0, -6);
 	solver.setVariable(1, 7);
 	solver.setVariable(2, 4);
-	testCommon(solver, SS::Operation::MINIMIZE);
+	testCommon(solver, SS::Operation::MINIMIZE, 16);
 }
 
 void testSolver6() {
@@ -79,14 +83,14 @@ void testSolver6() {
 	solver.addConstraint(SS::Constraint{ .coefs{0,1},.type = SS::ConstraintType::GEQUAL, .value = 30 });
 	solver.setVariable(0, 1);
 	solver.setVariable(1, 2);
-	testCommon(solver, SS::Operation::MAXIMIZE);
+	testCommon(solver, SS::Operation::MAXIMIZE, 140);
 }
 
 void testSolver7() {
 	SS solver(1);
 	solver.addConstraint(SS::Constraint{ .coefs{1},.type = SS::ConstraintType::LEQUAL, .value = 200 });
 	solver.setVariable(0, 2, SS::VariableBounds::UNBOUNDED);
-	testCommon(solver, SS::Operation::MAXIMIZE);
+	testCommon(solver, SS::Operation::MAXIMIZE, 400);
 }
 
 void testSolver8() {
@@ -94,7 +98,7 @@ void testSolver8() {
 	solver.addConstraint(SS::Constraint{ .coefs{1,1},.type = SS::ConstraintType::GEQUAL, .value = -200 });
 	solver.setVariable(0, 1, SS::VariableBounds::NON_POSITIVE);
 	solver.setVariable(1, 1, SS::VariableBounds::NON_POSITIVE);
-	testCommon(solver, SS::Operation::MINIMIZE);
+	testCommon(solver, SS::Operation::MINIMIZE,-200);
 }
 
 void testSolver9() {
@@ -103,7 +107,7 @@ void testSolver9() {
 	solver.addConstraint(SS::Constraint{ .coefs{4,7},.type = SS::ConstraintType::LEQUAL, .value = 28 });
 	solver.setVariable(0, 5, SS::VariableBounds::NON_NEGATIVE, SS::VariableType::INTEGER);
 	solver.setVariable(1, 6, SS::VariableBounds::NON_NEGATIVE, SS::VariableType::INTEGER);
-	testCommon(solver, SS::Operation::MAXIMIZE);
+	testCommon(solver, SS::Operation::MAXIMIZE,27);
 }
 
 void testSolver10() {
@@ -132,7 +136,7 @@ void testSolver10() {
 	for (int i = 0; i < buttons.size(); ++i) {
 		solver.setVariable(i, 1.0f, SS::VariableBounds::NON_NEGATIVE, SS::VariableType::INTEGER);
 	}
-	testCommon(solver, SS::Operation::MINIMIZE);
+	testCommon(solver, SS::Operation::MINIMIZE,114);
 }
 
 int main()
@@ -145,7 +149,7 @@ int main()
 	testSolver6();
 	testSolver7();
 	testSolver8();
-	//testSolver9();
+	testSolver9();
 	testSolver10();
 
 	return 0;

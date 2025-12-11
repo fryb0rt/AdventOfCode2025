@@ -52,6 +52,8 @@ struct IntegerOperations {
 /// Simplex solver for linear programming problems
 ///	Handles both integer and non-integer variables
 ///	Handles all types of constraints (<=, >=, =)
+/// Internally uses the original simplex algorithm and thus might
+/// not be efficient for large matrices.
 template<typename T, typename TInteger = int64_t, const T tolerance = T(1e-6f)>
 class SimplexSolver {
     using IntegerOperations = IntegerOperations<T, TInteger>;
@@ -346,7 +348,7 @@ public:
                 }
             }
         }
-        // Check variable bounds and cost
+        // Check variable type and bounds
         T computedCost = T(0);
         for (int i = 0; i < int(mVariables.size()); ++i) {
             const Variable& v = mVariables[i];
@@ -370,15 +372,22 @@ public:
                     std::cout << " out of bounds: value " << result.variables[i] << std::endl;
                 }
             }
+            if (v.type == VariableType::INTEGER && integerVariableError(result.variables[i]) > tolerance) {
+                ok = false;
+                if (TPrint) {
+                    std::cout << "Variable ";
+                    printVariable(i);
+                    std::cout << " out of bounds: value " << result.variables[i] << std::endl;
+                }
+            }
         }
+        // Check cost
         if (abs(computedCost - result.cost) > tolerance) {
             ok = false;
             if (TPrint) {
                 std::cout << "Computed cost " << computedCost << " does not match reported cost " << result.cost << std::endl;
             }
         }
-        // Check integer variables
-        // TODO
         return ok;
     }
 
@@ -510,6 +519,7 @@ private:
             if (constraints[i].type == ConstraintType::LEQUAL) {
                 e.coefs[newVarIndex] = T(1); // 1 slack
                 e.basis = newVarIndex;
+                e.isBasisArtifical = false;
                 e.basisValue = T(0);
                 ++newVarIndex;
             }
@@ -657,14 +667,20 @@ private:
         }
     }
 
+    /// Computes the distance of a given floating-point value from the closest integer value
+    static T integerVariableError(const T floatValue) {
+        const T value = IntegerOperations::removeFraction(floatValue);
+        const T difference = std::min(abs(floatValue - value), abs(floatValue - value - 1));
+        return difference;
+    }
+
     /// Finds the variable that violates its type the most (integer variables having non-integer values)
     int findTypeViolation(const Result& result) const {
         T maxDifference = T(0);
         int index = -1;
         for (int i = 0; i < int(mVariables.size()); ++i) {
             if (mVariables[i].type == VariableType::INTEGER) {
-                const T value = IntegerOperations::removeFraction(result.variables[i]);
-                const T difference = std::min(abs(result.variables[i] - value), abs(result.variables[i] - value - 1));
+                const T difference = integerVariableError(result.variables[i]);
                 if (difference > maxDifference) {
                     maxDifference = difference;
                     index = i;
