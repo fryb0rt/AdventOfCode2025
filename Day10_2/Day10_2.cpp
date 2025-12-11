@@ -10,7 +10,7 @@
 
 int main()
 {
-	using SS = SimplexSolver<float>;
+	//using SS = SimplexSolver<float>;
 	/*SS solver(2, true);
 	solver.addConstraint(SS::Constraint{ .coefs{5,4},.relation = SS::Relation::LEQUAL, .value = 32 });
 	solver.addConstraint(SS::Constraint{ .coefs{1,2},.relation = SS::Relation::LEQUAL, .value = 10 });
@@ -55,7 +55,7 @@ int main()
 			buttons.push_back(parseList<int>(s[i], ','));
 		}
 		std::vector<int> values = parseList<int>(s.back(), ',');
-		using SS = SimplexSolver<float>;
+		using SS = SimplexSolver<int>;
 		SS solver(buttons.size(), true);
 		for (int i = 0; i < values.size(); ++i) {
 			SS::Constraint c;
@@ -72,7 +72,9 @@ int main()
 			solver.addConstraint(c);
 		}
 		//solver.print();
-		sum += int64_t(solver.execute().cost);
+		int64_t val = int64_t(solver.execute().cost);
+		std::cout << val << std::endl;
+		sum += val;
 	}
 
 	std::cout << sum << std::endl;

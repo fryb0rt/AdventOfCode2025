@@ -300,6 +300,9 @@ public:
 
 		const auto replaceVariable = [&](Equation& eq, const Equation& var, const int pivot) {
 			const T multiplier = eq.coefs[pivot];
+			if (multiplier != 1 && multiplier != 0) {
+				return;
+			}
 			for (int i = 0; i < varCount; ++i) {
 				eq.coefs[i] -= multiplier * var.coefs[i];
 			}
@@ -316,6 +319,9 @@ public:
 					continue;
 				}
 				const T pivotValue = e.constant / e.coefs[pivot];
+				if (pivotValue * e.coefs[pivot] < e.constant) {
+					continue;
+				}
 				if (minimum == T(0) || minimum > pivotValue) {
 					minimum = pivotValue;
 					minimumEqIndex = i;
@@ -325,9 +331,15 @@ public:
 			// Compute pivot value using equation
 			const T div = equations[minimumEqIndex].coefs[pivot];
 			for (int j = 0; j < varCount; ++j) {
+				if (equations[minimumEqIndex].coefs[j] % div != 0) {
+					continue;
+				}
 				equations[minimumEqIndex].coefs[j] /= div;
 			}
 			equations[minimumEqIndex].constant /= div;
+			if (equations[minimumEqIndex].constant % div != 0) {
+				continue;
+			}
 			equations[minimumEqIndex].basis = pivot;
 			equations[minimumEqIndex].basisValue = costFunction.coefs[pivot];
 
